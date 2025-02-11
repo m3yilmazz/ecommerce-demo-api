@@ -1,4 +1,5 @@
-﻿using AspNetCoreRateLimit;
+﻿using Application.Application.Base.Behaviors;
+using AspNetCoreRateLimit;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,6 +12,13 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection RegisterMediatR(this IServiceCollection collection)
     {
         collection.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
+
+        return collection;
+    }
+    
+    public static IServiceCollection RegisterLoggerPipelineBehavior(this IServiceCollection collection)
+    {
+        collection.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingPipelineBehavior<,>));
 
         return collection;
     }

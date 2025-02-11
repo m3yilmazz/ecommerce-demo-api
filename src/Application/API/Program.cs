@@ -7,13 +7,22 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using Infrastructure.Repository;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.RegisterIpRateLimiting(builder.Configuration);
 
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .WriteTo.Console(new Serilog.Formatting.Json.JsonFormatter())
+    .WriteTo.File("logs/api-log-.txt", rollingInterval: RollingInterval.Day)
+    .Enrich.FromLogContext()
+    .CreateLogger();
+
+builder.Host.UseSerilog();
+
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -30,10 +39,10 @@ builder.Services.AddPostgres(builder.Configuration);
 builder.Services.AddRepositories();
 
 builder.Services.RegisterMediatR();
+builder.Services.RegisterLoggerPipelineBehavior();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -47,6 +56,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseIpRateLimiting();
+
+app.UseSerilogRequestLogging();
 
 app.UseCors(s => s.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 
