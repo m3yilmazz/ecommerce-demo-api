@@ -1,7 +1,9 @@
-﻿using Core.Domain.Base;
+﻿using Core.Domain.Audit;
+using Core.Domain.Base;
 using Core.Domain.Customers;
 using Core.Domain.Orders;
 using Core.Domain.Products;
+using Infrastructure.Repository.Audit;
 using Infrastructure.Repository.Customers;
 using Infrastructure.Repository.Orders;
 using Infrastructure.Repository.Products;
@@ -16,6 +18,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ICustomerRepository, CustomerRepository>();
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<IProductRepository, ProductRepository>();
+        services.AddScoped<IAuditLogRepository, AuditLogRepository>();
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 

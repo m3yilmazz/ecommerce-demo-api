@@ -1,4 +1,5 @@
-﻿using Core.Domain.Customers;
+﻿using Core.Domain.Audit;
+using Core.Domain.Customers;
 using Core.Domain.Orders;
 using Core.Domain.Products;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,7 @@ public class Context : DbContext
     public DbSet<Customer> Customers { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<Product> Products { get; set; }
+    public DbSet<AuditLog> AuditLogs { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

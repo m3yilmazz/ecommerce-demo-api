@@ -40,6 +40,7 @@ builder.Services.AddRepositories();
 
 builder.Services.RegisterMediatR();
 builder.Services.RegisterLoggerPipelineBehavior();
+builder.Services.RegisterAuditLogPipelineBehavior();
 
 var app = builder.Build();
 

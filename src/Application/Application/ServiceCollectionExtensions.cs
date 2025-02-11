@@ -22,6 +22,13 @@ public static class ServiceCollectionExtensions
 
         return collection;
     }
+    
+    public static IServiceCollection RegisterAuditLogPipelineBehavior(this IServiceCollection collection)
+    {
+        collection.AddTransient(typeof(IPipelineBehavior<,>), typeof(AuditLogBehavior<,>));
+
+        return collection;
+    }
 
     public static IServiceCollection RegisterIpRateLimiting(this IServiceCollection collection, IConfiguration configuration)
     {

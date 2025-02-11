@@ -6,20 +6,42 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Core.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigration : Migration
+    public partial class InitialAndAddAuditLog : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AlterDatabase()
+                .Annotation("Npgsql:PostgresExtension:citext", ",,");
+
+            migrationBuilder.CreateTable(
+                name: "AuditLogs",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    EntityName = table.Column<string>(type: "text", nullable: true),
+                    EntityId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ActionType = table.Column<string>(type: "text", nullable: true),
+                    OldValue = table.Column<string>(type: "text", nullable: true),
+                    NewValue = table.Column<string>(type: "text", nullable: true),
+                    ChangedBy = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AuditLogs", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Customers",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "text", maxLength: 100, nullable: false),
-                    LastName = table.Column<string>(type: "text", maxLength: 100, nullable: false),
-                    Address = table.Column<string>(type: "text", maxLength: 100, nullable: false),
-                    PostalCode = table.Column<string>(type: "text", maxLength: 100, nullable: false),
+                    Name = table.Column<string>(type: "citext", maxLength: 100, nullable: false),
+                    LastName = table.Column<string>(type: "citext", maxLength: 100, nullable: false),
+                    Address = table.Column<string>(type: "citext", maxLength: 100, nullable: false),
+                    PostalCode = table.Column<string>(type: "citext", maxLength: 100, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
@@ -33,7 +55,7 @@ namespace Core.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "text", maxLength: 100, nullable: false),
+                    Name = table.Column<string>(type: "citext", maxLength: 100, nullable: false),
                     Price = table.Column<double>(type: "double precision", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
@@ -90,7 +112,7 @@ namespace Core.Data.Migrations
                         column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateIndex(
@@ -112,6 +134,9 @@ namespace Core.Data.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "AuditLogs");
+
             migrationBuilder.DropTable(
                 name: "Items");
 

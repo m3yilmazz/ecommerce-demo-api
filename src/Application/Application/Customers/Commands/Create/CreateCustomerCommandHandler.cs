@@ -27,7 +27,8 @@ public class CreateCustomerCommandHandler : IRequestHandler<CreateCustomerComman
             throw new ConflictException($"There is another customer with given {request.Name} name and {request.LastName} lastname.");
 
         var customer = new Customer(request.Name, request.LastName, request.Address, request.PostalCode);
-
+        customer.SetId(request.Id);
+       
         await _customerRepository.CreateAsync(customer, cancellationToken);
         await _unitOfWork.SaveChangesAsync();
 
