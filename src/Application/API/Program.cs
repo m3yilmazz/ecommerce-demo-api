@@ -1,6 +1,7 @@
 using Application.API.Middlewares;
 using Application.API.Validations.Customers;
 using Application.Application;
+using AspNetCoreRateLimit;
 using Core.Data;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -9,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Services.RegisterIpRateLimiting(builder.Configuration);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -44,6 +45,8 @@ if (app.Environment.IsDevelopment())
 
     dbContext.Database.Migrate();
 }
+
+app.UseIpRateLimiting();
 
 app.UseCors(s => s.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 
