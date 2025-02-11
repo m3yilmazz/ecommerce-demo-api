@@ -32,8 +32,8 @@ public class CreateCustomerHandlerTest
         var command = new CreateCustomerCommand(name, lastName, address, postalCode);
 
         _repository
-            .Setup(repo => repo.Create(It.IsAny<Customer>()))
-            .Callback<Customer>(c => c.SetId(Guid.NewGuid()));
+            .Setup(repo => repo.CreateAsync(It.IsAny<Customer>(), It.IsAny<CancellationToken>()))
+            .Callback<Customer, CancellationToken>((customer, cancellationToken) => customer.SetId(Guid.NewGuid()));
 
         _unitOfWork
             .Setup(uow => uow.SaveChangesAsync())
@@ -43,7 +43,7 @@ public class CreateCustomerHandlerTest
 
         Assert.That(result.Data.Id, Is.Not.EqualTo(Guid.Empty));
 
-        _repository.Verify(repo => repo.Create(It.IsAny<Customer>()), Times.Once);
+        _repository.Verify(repo => repo.CreateAsync(It.IsAny<Customer>(), It.IsAny<CancellationToken>()), Times.Once);
         _unitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Once);
     }
 
@@ -57,11 +57,12 @@ public class CreateCustomerHandlerTest
         var command = new CreateCustomerCommand(name, lastName, address, postalCode);
 
         _repository
-            .Setup(repo => repo.Create(It.Is<Customer>(q =>
+            .Setup(repo => repo.CreateAsync(It.Is<Customer>(q =>
                 q.Name.Length <= 1 ||
                 q.LastName.Length <= 1 ||
                 q.Address.Length <= 1 ||
-                q.PostalCode.Length <= 1)))
+                q.PostalCode.Length <= 1),
+                It.IsAny<CancellationToken>()))
             .Throws(new BusinessRuleException(errorMessage));
 
         _unitOfWork
@@ -72,7 +73,7 @@ public class CreateCustomerHandlerTest
 
         Assert.That(ex.Message, Is.EqualTo(errorMessage));
 
-        _repository.Verify(repo => repo.Create(It.IsAny<Customer>()), Times.Never);
+        _repository.Verify(repo => repo.CreateAsync(It.IsAny<Customer>(), It.IsAny<CancellationToken>()), Times.Never);
         _unitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Never);
     }
 }

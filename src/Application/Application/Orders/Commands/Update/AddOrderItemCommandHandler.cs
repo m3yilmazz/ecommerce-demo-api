@@ -35,7 +35,6 @@ public class AddOrderItemCommandHandler : IRequestHandler<AddOrderItemCommand, O
         var priceOfItem = product.Data.Price * request.QuantityOfProduct;
 
         order.IncreaseTotalPrice(priceOfItem);
-        order.SetUpdatedAt();
 
         _orderRepository.Update(order);
         await _unitOfWork.SaveChangesAsync();

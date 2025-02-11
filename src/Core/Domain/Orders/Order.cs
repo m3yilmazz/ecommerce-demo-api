@@ -101,7 +101,6 @@ public class Order : AggregateRoot
         var decreasePriceOfItem = item.Product.Price * item.QuantityOfProduct;
 
         DecreaseTotalPrice(decreasePriceOfItem);
-        SetUpdatedAt();
 
         _items.Remove(item);
     }

@@ -61,8 +61,8 @@ public class CreateOrderCommandHandlerTest
             .ReturnsAsync(getProductByIdQueryResponse);
 
         _repository
-            .Setup(repo => repo.Create(It.IsAny<Order>()))
-            .Callback<Order>(c => c.SetId(Guid.NewGuid()));
+            .Setup(repo => repo.CreateAsync(It.IsAny<Order>(), It.IsAny<CancellationToken>()))
+            .Callback<Order, CancellationToken>((order, cancellationToken) => order.SetId(Guid.NewGuid()));
 
         _repository
             .Setup(repo => repo.FindByIdAsync(It.IsAny<Guid>(), default))
@@ -78,7 +78,7 @@ public class CreateOrderCommandHandlerTest
 
         _mediator.Verify(m => m.Send(It.IsAny<GetCustomerByIdQuery>(), default), Times.Once);
         _mediator.Verify(m => m.Send(It.IsAny<GetProductByIdQuery>(), default), Times.Exactly(items.Count));
-        _repository.Verify(repo => repo.Create(It.IsAny<Order>()), Times.Once);
+        _repository.Verify(repo => repo.CreateAsync(It.IsAny<Order>(), It.IsAny<CancellationToken>()), Times.Once);
         _repository.Verify(repo => repo.FindByIdAsync(It.IsAny<Guid>(), default), Times.Once);
         _unitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Once);
     }
@@ -111,8 +111,8 @@ public class CreateOrderCommandHandlerTest
             .ReturnsAsync(getProductByIdQueryResponse);
 
         _repository
-            .Setup(repo => repo.Create(It.IsAny<Order>()))
-            .Callback<Order>(c => c.SetId(Guid.NewGuid()));
+            .Setup(repo => repo.CreateAsync(It.IsAny<Order>(), It.IsAny<CancellationToken>()))
+            .Callback<Order, CancellationToken>((order, cancellationToken) => order.SetId(Guid.NewGuid()));
 
         _repository
             .Setup(repo => repo.FindByIdAsync(It.IsAny<Guid>(), default))
@@ -128,7 +128,7 @@ public class CreateOrderCommandHandlerTest
 
         _mediator.Verify(m => m.Send(It.IsAny<GetCustomerByIdQuery>(), default), Times.Once);
         _mediator.Verify(m => m.Send(It.IsAny<GetProductByIdQuery>(), default), Times.Never);
-        _repository.Verify(repo => repo.Create(It.IsAny<Order>()), Times.Never);
+        _repository.Verify(repo => repo.CreateAsync(It.IsAny<Order>(), It.IsAny<CancellationToken>()), Times.Never);
         _repository.Verify(repo => repo.FindByIdAsync(It.IsAny<Guid>(), default), Times.Never);
         _unitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Never);
     }

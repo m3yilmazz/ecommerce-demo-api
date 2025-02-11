@@ -28,7 +28,7 @@ public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand,
 
         var product = new Product(request.Name, request.Price);
 
-        _productRepository.Create(product);
+        await _productRepository.CreateAsync(product, cancellationToken);
         await _unitOfWork.SaveChangesAsync();
 
         return new ObjectBaseResponse<ProductDto>(product.Map());

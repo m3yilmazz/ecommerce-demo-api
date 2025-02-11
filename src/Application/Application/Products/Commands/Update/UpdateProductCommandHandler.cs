@@ -31,7 +31,6 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
 
         product.SetName(request.Name);
         product.SetPrice(request.Price);
-        product.SetUpdatedAt();
 
         _productRepository.Update(product);
         await _unitOfWork.SaveChangesAsync();

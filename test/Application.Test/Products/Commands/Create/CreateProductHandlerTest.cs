@@ -34,8 +34,8 @@ public class CreateProductHandlerTest
         var command = new CreateProductCommand(name, price);
 
         _repository
-            .Setup(repo => repo.Create(It.IsAny<Product>()))
-            .Callback<Product>(c => c.SetId(productId));
+            .Setup(repo => repo.CreateAsync(It.IsAny<Product>(), It.IsAny<CancellationToken>()))
+            .Callback<Product, CancellationToken>((product, cancellationToken) => product.SetId(productId));
 
         _unitOfWork
             .Setup(uow => uow.SaveChangesAsync())
@@ -45,7 +45,7 @@ public class CreateProductHandlerTest
 
         Assert.That(result.Data.Id, Is.Not.EqualTo(Guid.Empty));
 
-        _repository.Verify(repo => repo.Create(It.IsAny<Product>()), Times.Once);
+        _repository.Verify(repo => repo.CreateAsync(It.IsAny<Product>(), It.IsAny<CancellationToken>()), Times.Once);
         _unitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Once);
     }
 
@@ -58,7 +58,7 @@ public class CreateProductHandlerTest
         var command = new CreateProductCommand(name, price);
 
         _repository
-            .Setup(repo => repo.Create(It.Is<Product>(q => q.Name.Length < 5)))
+            .Setup(repo => repo.CreateAsync(It.Is<Product>(q => q.Name.Length < 5), It.IsAny<CancellationToken>()))
             .Throws(new BusinessRuleException("Product name must be at least 5 characters long."));
 
         _unitOfWork
@@ -69,7 +69,7 @@ public class CreateProductHandlerTest
 
         Assert.That(ex.Message, Is.EqualTo("Product name must be at least 5 characters long."));
 
-        _repository.Verify(repo => repo.Create(It.IsAny<Product>()), Times.Never);
+        _repository.Verify(repo => repo.CreateAsync(It.IsAny<Product>(), It.IsAny<CancellationToken>()), Times.Never);
         _unitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Never);
     }
 
@@ -82,7 +82,7 @@ public class CreateProductHandlerTest
         var command = new CreateProductCommand(name, price);
 
         _repository
-            .Setup(repo => repo.Create(It.Is<Product>(q => q.Name.Length < 5)))
+            .Setup(repo => repo.CreateAsync(It.Is<Product>(q => q.Name.Length < 5), It.IsAny<CancellationToken>()))
             .Throws(new ArgumentOutOfRangeException($"price must be zero or greater. (Parameter 'price')\r\nActual value was {price}."));
 
         _unitOfWork
@@ -93,7 +93,7 @@ public class CreateProductHandlerTest
 
         Assert.That(ex.Message, Is.EqualTo($"price must be zero or greater. (Parameter 'price')\r\nActual value was {price}."));
 
-        _repository.Verify(repo => repo.Create(It.IsAny<Product>()), Times.Never);
+        _repository.Verify(repo => repo.CreateAsync(It.IsAny<Product>(), It.IsAny<CancellationToken>()), Times.Never);
         _unitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Never);
     }
 }

@@ -89,9 +89,10 @@ public class UpdateProductHandlerTest
             .ReturnsAsync(product);
 
         _repository
-            .Setup(repo => repo.Create(It.Is<Product>(q =>
+            .Setup(repo => repo.CreateAsync(It.Is<Product>(q =>
                 q.Name.Length <= 1 ||
-                q.Price < 0)))
+                q.Price < 0),
+                It.IsAny<CancellationToken>()))
             .Throws(new BusinessRuleException(errorMessage));
 
         _unitOfWork

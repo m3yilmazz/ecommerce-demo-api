@@ -28,7 +28,7 @@ public class CreateCustomerCommandHandler : IRequestHandler<CreateCustomerComman
 
         var customer = new Customer(request.Name, request.LastName, request.Address, request.PostalCode);
 
-        _customerRepository.Create(customer);
+        await _customerRepository.CreateAsync(customer, cancellationToken);
         await _unitOfWork.SaveChangesAsync();
 
         return new ObjectBaseResponse<CustomerDto>(customer.Map());

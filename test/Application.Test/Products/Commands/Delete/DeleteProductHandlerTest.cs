@@ -72,7 +72,7 @@ internal class DeleteProductHandlerTest
 
         Assert.That(ex.Message, Is.EqualTo($"There is no product with given {command.Id} ID."));
 
-        _repository.Verify(repo => repo.Create(It.IsAny<Product>()), Times.Never);
+        _repository.Verify(repo => repo.Delete(It.Is<Product>(q => existingProductIds.All(a => a != command.Id))), Times.Never);
         _unitOfWork.Verify(uow => uow.SaveChangesAsync(), Times.Never);
     }
 }

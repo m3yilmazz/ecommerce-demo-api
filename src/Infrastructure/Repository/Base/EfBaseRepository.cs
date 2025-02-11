@@ -16,14 +16,14 @@ public class EfBaseRepository<TEntity> : IEfRepository<TEntity> where TEntity : 
         DbSet = context.Set<TEntity>();
     }
 
-    public virtual void Create(TEntity aggregate)
+    public virtual async Task CreateAsync(TEntity aggregate, CancellationToken cancellationToken)
     {
-        DbSet.Add(aggregate);
+        await DbSet.AddAsync(aggregate, cancellationToken);
     }
 
     public virtual void Delete(TEntity aggregate)
     {
-        DbSet.Remove(aggregate);
+       DbSet.Remove(aggregate);
     }
 
     public IQueryable<TEntity> FindAllAsQueryable(params Expression<Func<TEntity, object>>[] includeProperties)

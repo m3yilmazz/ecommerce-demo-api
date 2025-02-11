@@ -4,7 +4,7 @@ namespace Core.Domain.Base;
 
 public interface IEfRepository<TEntity> : IRepository where TEntity : Entity
 {
-    void Create(TEntity aggregate);
+    Task CreateAsync(TEntity aggregate, CancellationToken cancellationToken);
     void Update(TEntity aggregate);
     void Delete(TEntity aggregate);
     Task<TEntity> FindByIdAsync(Guid key, Expression<Func<TEntity, bool>> predicate = null);

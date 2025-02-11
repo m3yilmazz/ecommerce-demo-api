@@ -95,11 +95,12 @@ public class UpdateCustomerHandlerTest
             .ReturnsAsync(customer);
 
         _repository
-            .Setup(repo => repo.Create(It.Is<Customer>(q =>
+            .Setup(repo => repo.CreateAsync(It.Is<Customer>(q =>
                 q.Name.Length <= 1 ||
                 q.LastName.Length <= 1 ||
                 q.Address.Length <= 1 ||
-                q.PostalCode.Length <= 1)))
+                q.PostalCode.Length <= 1),
+                It.IsAny<CancellationToken>()))
             .Throws(new BusinessRuleException(errorMessage));
 
         _unitOfWork

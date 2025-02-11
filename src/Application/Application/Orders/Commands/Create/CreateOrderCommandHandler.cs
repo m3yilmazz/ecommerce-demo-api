@@ -38,7 +38,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Obj
             order.IncreaseTotalPrice(priceOfItem);
         }
 
-        _orderRepository.Create(order);
+        await _orderRepository.CreateAsync(order, cancellationToken);
         await _unitOfWork.SaveChangesAsync();
 
         var result = await _orderRepository.FindByIdAsync(order.Id);

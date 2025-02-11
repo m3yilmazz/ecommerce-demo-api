@@ -36,7 +36,6 @@ public class UpdateCustomerCommandHandler : IRequestHandler<UpdateCustomerComman
         customer.SetLastName(request.LastName);
         customer.SetAddress(request.Address);
         customer.SetPostalCode(request.PostalCode);
-        customer.SetUpdatedAt();
 
         _customerRepository.Update(customer);
         await _unitOfWork.SaveChangesAsync();
